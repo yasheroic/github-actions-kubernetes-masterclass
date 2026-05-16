@@ -33,6 +33,7 @@ resource "aws_security_group" "allow_tls" {
 
 # Allowed Ports
 locals {
+  env           = terraform.workspace
   ingress_ports = ["22", "80", "443", "8888", "30080", "8080", "3000"]
 }
 
@@ -64,7 +65,7 @@ resource "aws_key_pair" "deployer" {
 # EC2 Instance
 resource "aws_instance" "web" {
   ami                    = data.aws_ami.ubuntu.id
-  instance_type          = var.instance_type
+  instance_type          = lookup(var.instance_type, local.env, "t3.medium")
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
 

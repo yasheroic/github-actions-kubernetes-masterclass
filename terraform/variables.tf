@@ -5,7 +5,11 @@ variable "aws_region" {
 }
 
 variable "instance_type" {
-  description = "Type of EC2 instance to launch"
-  type        = string
-  default     = "t3.large"
+  type = map(string)
+  default = {
+    default = "t3.large"
+    dev     = "t3.small"
+    stg     = "t3.medium"
+    prd     = "t3.large"
+  }
 }
