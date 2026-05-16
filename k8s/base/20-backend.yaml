@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: yasheroic/skillpulse-backend:da2d77029e9bf5d29481a11a104aa8bd558fa282
+          image: yasheroic/skillpulse-backend:e64f02b6cae6332add93582b9646f3d2d89a4379
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
