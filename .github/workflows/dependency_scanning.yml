@@ -14,3 +14,4 @@ jobs:
         with:
           go-version-input: '1.26'
           go-package: './backend/...'
+        continue-on-error: true

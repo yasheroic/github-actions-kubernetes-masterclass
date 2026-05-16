@@ -12,22 +12,22 @@ on:
 jobs:
   Code-Quality:
     uses: ./.github/workflows/code_quality.yml
-    continue-on-error: true
+
 
   Secret-Scan:
     uses: ./.github/workflows/secret_scanning.yml
-    continue-on-error: true
+
 
   Dependency-Scan:
     uses: ./.github/workflows/dependency_scanning.yml
-    continue-on-error: true
+
 
   Dockerfile-linting:
     uses: ./.github/workflows/dockerfile_scanning.yml
-    continue-on-error: true
+
 
   Docker-image-scan:
     needs: [Code-Quality, Secret-Scan, Dependency-Scan, Dockerfile-linting]
     uses: ./.github/workflows/docker_image_scan.yml
     secrets: inherit
-    continue-on-error: true
+    
