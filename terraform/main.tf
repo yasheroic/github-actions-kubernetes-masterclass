@@ -18,7 +18,7 @@ data "aws_ami" "ubuntu" {
 #aws default vpc
 
 resource "aws_default_vpc" "default" {
-  
+
 }
 
 # Security Group
@@ -68,6 +68,11 @@ resource "aws_instance" "web" {
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
 
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "Web-Server"
   }
@@ -84,3 +89,6 @@ resource "aws_eip" "web" {
     Name = "Web-Server-EIP"
   }
 }
+
+
+

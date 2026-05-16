@@ -137,6 +137,8 @@
         repo: "https://github.com/yasheroic/github-actions-kubernetes-masterclass.git"
         dest: "/home/ubuntu/app"
         version: main
+        update: yes
+        force: yes
 
     - name: Run make up in background
       become: false

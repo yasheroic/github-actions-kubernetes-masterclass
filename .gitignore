@@ -6,6 +6,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 
 # Local env files
 .env
@@ -21,6 +23,51 @@ CLAUDE.md
 docs/skillpulse-cicd-guide.html
 docs/skillpulse-kubernetes-guide.html
 
+# SSH Keys (private keys only - pub keys can be tracked)
 ec2-hackathon
 ec2-hackathon.pub
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/crash.log
+terraform/*.tfvars
+!terraform/example.tfvars
+
+# Kubernetes
+.kube/
+kubeconfig.yaml
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# KIND
+kind-networks.json
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# IDE Python files
+.pylintrc
+.mypy_cache/
+.pytest_cache/
 
