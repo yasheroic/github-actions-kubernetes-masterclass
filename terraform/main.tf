@@ -33,7 +33,7 @@ resource "aws_security_group" "allow_tls" {
 
 # Allowed Ports
 locals {
-  ingress_ports = ["22", "80", "443", "8888", "30080"]
+  ingress_ports = ["22", "80", "443", "8888", "30080", "8080"]
 }
 
 # Ingress Rules
