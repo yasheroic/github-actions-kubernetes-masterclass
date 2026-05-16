@@ -1,0 +1,87 @@
+---
+- name: Update and upgrade Ubuntu EC2 instances
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Update all packages to their latest version
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
+---
+- name: Install Docker on Ubuntu EC2
+  hosts: all
+  become: true
+  vars:
+    docker_packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install prerequisite packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+    - name: Create directory for Docker APT key
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker official GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Get Ubuntu architecture
+      ansible.builtin.command: dpkg --print-architecture
+      register: ubuntu_arch
+      changed_when: false
+
+    - name: Get Ubuntu codename
+      ansible.builtin.command: lsb_release -cs
+      register: ubuntu_codename
+      changed_when: false
+
+    - name: Add Docker official repository
+      ansible.builtin.apt_repository:
+        repo: >
+          deb [arch={{ ubuntu_arch.stdout }} signed-by=/etc/apt/keyrings/docker.asc]
+          https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
+        state: present
+        filename: docker
+
+    - name: Install Docker engines
+      ansible.builtin.apt:
+        name: "{{ docker_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Verify Docker service is running
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add ubuntu user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: true
+
+
