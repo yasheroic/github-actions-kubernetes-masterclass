@@ -1,0 +1,33 @@
+name: Docker Image Scan
+on:
+  workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+jobs:
+  image-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy scan backend
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: "${{ secrets.DOCKERHUB_USERNAME }}/skillpulse-backend:latest"
+          severity: 'CRITICAL,HIGH'
+          format: json
+          output: 'trivy-backend-report.json'
+          exit-code: '0'
+      - name: Trivy scan frontend
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: "${{ secrets.DOCKERHUB_USERNAME }}/skillpulse-frontend:latest"
+          severity: 'CRITICAL,HIGH'
+          format: json
+          output: 'trivy-frontend-report.json'
+          exit-code: '0'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trivy-reports
+          path: |
+            trivy-backend-report.json
+            trivy-frontend-report.json

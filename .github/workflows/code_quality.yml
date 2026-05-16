@@ -1,0 +1,23 @@
+name: Code Quality
+on:
+  workflow_call:
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: ./backend
+      - name: Run gosec SAST
+        uses: securego/gosec@master
+        with:
+          args: '-fmt json -out gosec-report.json ./backend/...'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gosec-report
+          path: gosec-report.json
