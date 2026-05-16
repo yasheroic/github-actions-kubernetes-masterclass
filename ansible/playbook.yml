@@ -1,5 +1,5 @@
 ---
-- name: Update and upgrade Ubuntu EC2 instances
+- name: Setup EC2 with Docker, kubectl, kind and deploy app
   hosts: all
   become: true
   gather_facts: true
@@ -9,26 +9,10 @@
       ansible.builtin.apt:
         name: "*"
         state: latest
-
----
-- name: Install Docker on Ubuntu EC2
-  hosts: all
-  become: true
-  vars:
-    docker_packages:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-buildx-plugin
-      - docker-compose-plugin
-
-  tasks:
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: true
         cache_valid_time: 3600
 
-    - name: Install prerequisite packages
+    # ===== Docker Installation =====
+    - name: Install Docker prerequisite packages
       ansible.builtin.apt:
         name:
           - ca-certificates
@@ -66,13 +50,18 @@
         state: present
         filename: docker
 
-    - name: Install Docker engines
+    - name: Install Docker packages
       ansible.builtin.apt:
-        name: "{{ docker_packages }}"
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
         state: present
         update_cache: true
 
-    - name: Verify Docker service is running
+    - name: Start and enable Docker service
       ansible.builtin.systemd:
         name: docker
         state: started
@@ -84,4 +73,100 @@
         groups: docker
         append: true
 
+    # ===== kubectl Installation =====
+    - name: Install kubectl dependencies
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
 
+    - name: Download Kubernetes GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | \
+        gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: |
+          deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /
+        mode: '0644'
+
+    - name: Update apt cache for Kubernetes
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install kubectl
+      ansible.builtin.apt:
+        name: kubectl
+        state: present
+
+    - name: Hold kubectl version
+      ansible.builtin.dpkg_selections:
+        name: kubectl
+        selection: hold
+
+    # ===== KIND Installation =====
+    - name: Download KIND binary
+      ansible.builtin.get_url:
+        url: https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
+        dest: /usr/local/bin/kind
+        mode: '0755'
+
+    # ===== Git and Make Setup (non-root) =====
+    - name: Install git and make
+      ansible.builtin.apt:
+        name:
+          - git
+          - make
+        state: present
+        update_cache: true
+
+    - name: Reset SSH connection for docker group changes
+      ansible.builtin.meta: reset_connection
+
+    # ===== Clone Repository and Run =====
+    - name: Clone GitHub repository
+      become: false
+      ansible.builtin.git:
+        repo: "https://github.com/yasheroic/github-actions-kubernetes-masterclass.git"
+        dest: "/home/ubuntu/app"
+        version: main
+
+    - name: Run make up in background
+      become: false
+      ansible.builtin.shell: nohup make up > /tmp/make-up.log 2>&1 &
+      args:
+        chdir: /home/ubuntu/app
+
+    # ===== Verification =====
+    - name: Verify Docker installation
+      become: false
+      ansible.builtin.command: docker --version
+      register: docker_version
+
+    - name: Verify kubectl installation
+      become: false
+      ansible.builtin.command: kubectl version --client
+      register: kubectl_version
+
+    - name: Verify KIND installation
+      become: false
+      ansible.builtin.command: kind --version
+      register: kind_version
+
+    - name: Print installation summary
+      become: false
+      ansible.builtin.debug:
+        msg: |
+          Installation Summary:
+          - Docker: {{ docker_version.stdout }}
+          - kubectl: {{ kubectl_version.stdout }}
+          - KIND: {{ kind_version.stdout }}
+          - Repository cloned to: /home/ubuntu/app
+          - make up executed
