@@ -6,6 +6,9 @@ on:
     paths-ignore:
       - 'k8s/**'
       - 'docs/**'
+      - 'scripts/**'
+      - 'ansible/**'
+      - 'terraform/**'
       - '**/*.md'
 
 jobs:
