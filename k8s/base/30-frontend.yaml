@@ -38,7 +38,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: yasheroic/skillpulse-frontend:e31316b2fe7b39f4796366579f27476300f57c15
+          image: yasheroic/skillpulse-frontend:87833be0870d829d2768b79f42187baf353cb499
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
