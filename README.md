@@ -2,7 +2,7 @@
 
 > A fully automated, secure, and observable 3-tier application deployment demonstrating modern DevOps practices end-to-end.
 
-![Architecture Diagram](docs/images/architecture.png)
+![Architecture Diagram](image-12.png)
 
 ---
 
@@ -225,8 +225,7 @@ Triggered automatically when CI completes successfully.
 ### Build Time Improvement (Docker Layer Caching)
 
 <!-- Add screenshot: CI run showing cache hit -->
-![CI Cache Hit](docs/images/ci-cache-hit.png)
-
+![CI run showing cache hit](image.png)
 | Run | Cache Status | Duration |
 |---|---|---|
 | First run | Cache miss | ~2m 30s |
@@ -249,7 +248,7 @@ DevSecOps Pipeline
 ```
 
 <!-- Add screenshot: DevSecOps pipeline all green -->
-![DevSecOps Pipeline](docs/images/devsecops-pipeline.png)
+![DevSecOps pipeline](image-1.png)
 
 ### Security Tools
 
@@ -304,7 +303,7 @@ terraform apply
 Each workspace creates isolated resources tagged with the environment name.
 
 <!-- Add screenshot: terraform plan output showing workspace -->
-![Terraform Workspaces](docs/images/terraform-workspaces.png)
+![terraform plan output showing workspace](image-2.png)
 
 ---
 
@@ -326,7 +325,7 @@ ansible-playbook playbook.yml
 - Runs `make up` to create the kind cluster and deploy the app
 
 <!-- Add screenshot: Ansible playbook success output -->
-![Ansible Playbook](docs/images/ansible-playbook.png)
+![Ansible playbook success output](image-3.png)
 
 ---
 
@@ -413,7 +412,7 @@ kubectl apply → rolling update in kind cluster
 - **Health checks** — shows pod health in real-time UI
 
 <!-- Add screenshot: ArgoCD UI showing Synced + Healthy -->
-![ArgoCD UI](docs/images/argocd-ui.png)
+![ArgoCD UI showing Synced + Healthy](image-4.png)
 
 ### Access ArgoCD UI:
 
@@ -453,10 +452,10 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
 ### Grafana Dashboards:
 
 <!-- Add screenshot: Grafana Kubernetes cluster overview dashboard -->
-![Grafana Cluster Overview](docs/images/grafana-cluster.png)
+![Grafana Kubernetes cluster overview dashboard](image-5.png)
 
 <!-- Add screenshot: Grafana Node Exporter dashboard -->
-![Grafana Node Exporter](docs/images/grafana-node.png)
+![Grafana Node Exporter dashboard](image-6.png)
 
 | Dashboard | Import ID | What it shows |
 |---|---|---|
@@ -618,23 +617,23 @@ docker compose up -d --build
 
 ### GitHub Actions — CI Pipeline
 <!-- Add screenshot -->
-![CI Pipeline](docs/images/ci-pipeline.png)
+![CI Pipeline](image-7.png)
 
 ### GitHub Actions — DevSecOps Pipeline
 <!-- Add screenshot -->
-![DevSecOps Pipeline](docs/images/devsecops-pipeline.png)
+![DevSecOps Pipeline](image-8.png)
 
 ### ArgoCD — Application Health
 <!-- Add screenshot -->
-![ArgoCD](docs/images/argocd-ui.png)
+![ArgoCD — Application Health](image-9.png)
 
 ### Grafana — Kubernetes Dashboard
 <!-- Add screenshot -->
-![Grafana](docs/images/grafana-cluster.png)
+![Grafana — Kubernetes Dashboard](image-10.png)
 
 ### Grafana — Node Exporter
 <!-- Add screenshot -->
-![Grafana Node](docs/images/grafana-node.png)
+![Grafana — Node Exporter](image-11.png)
 
 ---
 
